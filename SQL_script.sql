@@ -38,8 +38,17 @@ INSERT INTO `studio` (`studio_id`, `studio_name`, `founded_year`, `headquarters`
 ('S002', 'Paramount Pictures', 1912, 'Hollywood, California'),
 ('S003', 'Marvel Studios', 1993, 'Burbank, California');
 
--- 3. Insert movies
-INSERT INTO `movie` (`movie_id`, `movie_name`, `release_year`, `duration_minutes`, `description`, `genre_id`, `studio_id`) VALUES 
-('M001', 'The Dark Knight', 2008, 152, 'Batman faces the Joker in Gotham City', 'G001', 'S001'),
-('M002', 'Inception', 2010, 148, 'Dream-sharing technology heist', 'G003', 'S001'),
-('M003', 'The Shawshank Redemption', 1994, 142, 'Two imprisoned men bond over the years', 'G002', 'S002');
+
+INSERT INTO `movie` (`movie_id`, `movie_name`, `release_year`, `genre_id`, `studio_id`) VALUES 
+('M001', 'The Dark Knight', 2008, 'G001', 'S001'),
+('M002', 'Inception', 2010, 'G003', 'S001'),
+('M003', 'The Shawshank Redemption', 1994, 'G002', 'S002')
+('M004', 'Pulp Fiction', 1994, 'G002', 'S002'),
+('M005', 'The Matrix', 1999, 'G003', 'S001'),
+('M006', 'Forrest Gump', 1994, 'G002', 'S002'),
+('M007', 'The Avengers', 2012, 'G001', 'S003'),
+('M008', 'Jurassic Park', 1993, 'G003', 'S002'),
+('M009', 'The Godfather', 1972, 'G002', 'S002'),
+('M010', 'Black Panther', 2018, 'G001', 'S003'),
+
+# ('M011', 'La La Land', 2016, 'G004', 'S001');
