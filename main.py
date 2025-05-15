@@ -15,42 +15,51 @@ class main(QMainWindow):
         self.tableWidget.setColumnWidth(2, 100)
         self.tableWidget.setColumnWidth(3, 100)
         self.tableWidget.setColumnWidth(4, 215)
-        self.tableWidget.setHorizontalHeaderLabels(['movie_id',
+        self.load_data()
+        '''self.tableWidget.setHorizontalHeaderLabels(['movie_id',
                                                   'movie_name',
                                                   'release_year',
                                                   'genre_name',
-                                                  'studio_name'])
+                                                  'studio_name'])'''
+        
 
     def load_data(self):
-        query = '''SELECT 
-                        m.movie_id,
-                        m.movie_name,
-                        m.release_year,
-                        g.genre_name,
-                        s.studio_name
-                    FROM 
-                        movie m
-                    JOIN 
-                        genre g ON m.genre_id = g.genre_id
-                    JOIN 
-                        studio s ON m.studio_id = s.studio_id
-                    ORDER BY 
-                        m.movie_id;'''
-            
-        self.db.cursor.execute(query)
+        query = '''
+            SELECT 
+                m.movie_id,
+                m.movie_name,
+                m.release_year,
+                g.genre_name,
+                s.studio_name
+            FROM 
+                movie m
+            JOIN 
+                genre g ON m.genre_id = g.genre_id
+            JOIN 
+                studio s ON m.studio_id = s.studio_id
+            ORDER BY 
+                m.movie_id;
+        '''
+        
+        try:
+            self.db.cursor.execute(query)
+            results = self.db.cursor.fetchall()
 
-        results = self.db.cursor.fetchall() # Get all results
-        
-        # Set row count based on actual results
-        self.tableWidget.setRowCount(len(results))
-        
-        for tablerow, row in enumerate(results):
-            # Convert all values to strings for QTableWidgetItem
-            self.tableWidget.setItem(tablerow, 0, QTableWidgetItem(str(row[0])))
-            self.tableWidget.setItem(tablerow, 1, QTableWidgetItem(str(row[1])))
-            self.tableWidget.setItem(tablerow, 2, QTableWidgetItem(str(row[2])))
-            self.tableWidget.setItem(tablerow, 3, QTableWidgetItem(str(row[3])))
-            self.tableWidget.setItem(tablerow, 4, QTableWidgetItem(str(row[4])))
+            # Set up table structure
+            headers = ["ID", "Title", "Year", "Genre", "Studio"]
+            self.tableWidget.setColumnCount(len(headers))
+            self.tableWidget.setHorizontalHeaderLabels(headers)
+            self.tableWidget.setRowCount(len(results))
+
+            # Insert data
+            for row_idx, row_data in enumerate(results):
+                for col_idx, value in enumerate(row_data):
+                    self.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
+
+            self.tableWidget.resizeColumnsToContents()
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
             
 
 
