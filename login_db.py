@@ -8,10 +8,16 @@ class MainUI(QMainWindow):
     def __init__(self):
         super(MainUI, self).__init__()
         loadUi("login.ui", self)
-        self.pushButton.clicked.connect(self.clickhandler)
+        self.pushButton.clicked.connect(self.login)
 
-    def clickhandler(self):
-        print("Hello World")
+    def login(self):
+        password = 'ace'
+        entered_pass = self.lineEdit.text() 
+
+        if password == entered_pass:
+            print("Successfully logged in")
+        else:
+            print('unsucceful login')
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
