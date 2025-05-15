@@ -10,14 +10,23 @@ class login_db(QMainWindow):
         loadUi("login.ui", self)
         self.pushButton.clicked.connect(self.login)
 
-    def login(self):
-        password = 'ace'
-        entered_pass = self.lineEdit.text() 
+    def connect(self):
+        user_input = self.lineEdit.text()
 
-        if password == entered_pass:
-            print("Successfully logged in")
-        else:
-            print('unsucceful login')
+        try:
+            con = mysql.connector.connect(user = user_input, 
+                                        password = pass_input, 
+                                        host = 'localhost', 
+                                        database = 'movie_manager')
+            print('Connection successful')
+            return con
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                print("Something is wrong with your user name or password")
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                print("Database does not exist")
+            else:
+                print(err)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
