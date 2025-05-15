@@ -8,7 +8,7 @@ class login_db(QMainWindow):
     def __init__(self):
         super(login_db, self).__init__()
         loadUi("login.ui", self)
-        self.pushButton.clicked.connect(self.connect)
+        self.pushButton.clicked.connect(self.login)
 
     def login(self):
         user_input = self.lineEdit.text()
