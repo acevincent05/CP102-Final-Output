@@ -17,7 +17,7 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>30</x>
       <y>20</y>
       <width>771</width>
       <height>91</height>
@@ -47,8 +47,33 @@
       <height>321</height>
      </rect>
     </property>
+    <column>
+     <property name="text">
+      <string>ID</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Title</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Year</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Genre</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>Studio</string>
+     </property>
+    </column>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="view_btn">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -61,7 +86,7 @@
      <string>VIEW</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="add_btn">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -74,7 +99,7 @@
      <string>ADD</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_3">
+   <widget class="QPushButton" name="edit_btn">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -87,7 +112,7 @@
      <string>EDIT</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_4">
+   <widget class="QPushButton" name="delete_button">
     <property name="geometry">
      <rect>
       <x>630</x>
