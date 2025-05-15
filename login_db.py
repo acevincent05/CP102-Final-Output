@@ -5,7 +5,7 @@ import sys
 class MainUI(QMainWindow):
     def __init__(self):
         super(MainUI, self).__init__()
-        loadUi("mainui.ui", self)
+        loadUi("login.ui", self)
         self.pushButton.clicked.connect(self.clickhandler)
 
     def clickhandler(self):
