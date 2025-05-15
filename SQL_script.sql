@@ -26,19 +26,16 @@ CREATE TABLE IF NOT EXISTS `movie` (
     FOREIGN KEY (`studio_id`) REFERENCES `studio`(`studio_id`)
 );
 
--- 1. Insert genres
 INSERT INTO `genre` (`genre_id`, `genre_name`) VALUES 
 ('G001', 'Action'),
 ('G002', 'Drama'),
 ('G003', 'Sci-Fi'),
 ('G004', 'Comedy');
 
--- 2. Insert studios
 INSERT INTO `studio` (`studio_id`, `studio_name`, `founded_year`, `headquarters`) VALUES 
 ('S001', 'Warner Bros.', 1923, 'Burbank'),
 ('S002', 'Paramount Pictures', 1912, 'Hollywood'),
 ('S003', 'Marvel Studios', 1993, 'Burbank');
-
 
 INSERT INTO `movie` (`movie_id`, `movie_name`, `release_year`, `genre_id`, `studio_id`) VALUES 
 ('M001', 'The Dark Knight', 2008, 'G001', 'S001'),
