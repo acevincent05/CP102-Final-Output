@@ -55,19 +55,16 @@ INSERT INTO `movie` (`movie_id`, `movie_name`, `release_year`, `genre_id`, `stud
 # ('M011', 'La La Land', 2016, 'G004', 'S001');
 
 SELECT 
+	m.movie_id,
     m.movie_name,
     m.release_year,
     g.genre_name,
-    s.studio_name,
-    s.founded_year,
-    s.headquarters
+    s.studio_name
 FROM 
     movie m
 JOIN 
     genre g ON m.genre_id = g.genre_id
 JOIN 
     studio s ON m.studio_id = s.studio_id
-WHERE 
-    m.movie_id BETWEEN 'M006' AND 'M013'
 ORDER BY 
-    m.release_year;
+    m.movie_id;
