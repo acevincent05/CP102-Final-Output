@@ -4,9 +4,9 @@ import sys
 import mysql.connector
 from mysql.connector import errorcode
 
-class MainUI(QMainWindow):
+class login_db(QMainWindow):
     def __init__(self):
-        super(MainUI, self).__init__()
+        super(login_db, self).__init__()
         loadUi("login.ui", self)
         self.pushButton.clicked.connect(self.login)
 
@@ -21,6 +21,6 @@ class MainUI(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    ui = MainUI()
+    ui = login_db()
     ui.show()
     app.exec_()
