@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'c:\Users\Ace Gamitin\Desktop\CP102\CP102-Final-Output\untitled.ui'
+# Form implementation generated from reading ui file 'untitled.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.11
 #
@@ -70,3 +70,13 @@ class Ui_MainWindow(object):
         self.lineEdit_2.setText(_translate("MainWindow", "Enter password"))
         self.lineEdit_3.setText(_translate("MainWindow", "Enter host"))
         self.lineEdit_4.setText(_translate("MainWindow", "Enter Database"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    MainWindow = QtWidgets.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
+    sys.exit(app.exec_())
