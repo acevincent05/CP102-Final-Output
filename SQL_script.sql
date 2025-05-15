@@ -30,25 +30,44 @@ CREATE TABLE IF NOT EXISTS `movie` (
 INSERT INTO `genre` (`genre_id`, `genre_name`) VALUES 
 ('G001', 'Action'),
 ('G002', 'Drama'),
-('G003', 'Sci-Fi');
+('G003', 'Sci-Fi'),
+('G004', 'Comedy');
 
 -- 2. Insert studios
 INSERT INTO `studio` (`studio_id`, `studio_name`, `founded_year`, `headquarters`) VALUES 
-('S001', 'Warner Bros.', 1923, 'Burbank, California'),
-('S002', 'Paramount Pictures', 1912, 'Hollywood, California'),
-('S003', 'Marvel Studios', 1993, 'Burbank, California');
+('S001', 'Warner Bros.', 1923, 'Burbank'),
+('S002', 'Paramount Pictures', 1912, 'Hollywood'),
+('S003', 'Marvel Studios', 1993, 'Burbank');
 
 
 INSERT INTO `movie` (`movie_id`, `movie_name`, `release_year`, `genre_id`, `studio_id`) VALUES 
 ('M001', 'The Dark Knight', 2008, 'G001', 'S001'),
 ('M002', 'Inception', 2010, 'G003', 'S001'),
-('M003', 'The Shawshank Redemption', 1994, 'G002', 'S002')
+('M003', 'The Shawshank Redemption', 1994, 'G002', 'S002'),
 ('M004', 'Pulp Fiction', 1994, 'G002', 'S002'),
 ('M005', 'The Matrix', 1999, 'G003', 'S001'),
 ('M006', 'Forrest Gump', 1994, 'G002', 'S002'),
 ('M007', 'The Avengers', 2012, 'G001', 'S003'),
 ('M008', 'Jurassic Park', 1993, 'G003', 'S002'),
 ('M009', 'The Godfather', 1972, 'G002', 'S002'),
-('M010', 'Black Panther', 2018, 'G001', 'S003'),
+('M010', 'Black Panther', 2018, 'G001', 'S003');
 
 # ('M011', 'La La Land', 2016, 'G004', 'S001');
+
+SELECT 
+    m.movie_name,
+    m.release_year,
+    g.genre_name,
+    s.studio_name,
+    s.founded_year,
+    s.headquarters
+FROM 
+    movie m
+JOIN 
+    genre g ON m.genre_id = g.genre_id
+JOIN 
+    studio s ON m.studio_id = s.studio_id
+WHERE 
+    m.movie_id BETWEEN 'M006' AND 'M013'
+ORDER BY 
+    m.release_year;
