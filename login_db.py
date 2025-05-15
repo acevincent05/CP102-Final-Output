@@ -8,10 +8,11 @@ class login_db(QMainWindow):
     def __init__(self):
         super(login_db, self).__init__()
         loadUi("login.ui", self)
-        self.pushButton.clicked.connect(self.login)
+        self.pushButton.clicked.connect(self.connect)
 
-    def connect(self):
+    def login(self):
         user_input = self.lineEdit.text()
+        pass_input = self.lineEdit_2.text()
 
         try:
             con = mysql.connector.connect(user = user_input, 
