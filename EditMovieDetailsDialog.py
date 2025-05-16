@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QMessageBox
 from PyQt5.uic import loadUi
 
+# for editing details of a movie 
 class EditMovieDetailsDialog(QDialog):
     def __init__(self, db_connection, movie_data): # receives pre-fetched movie_data
         super(EditMovieDetailsDialog, self).__init__()
