@@ -11,12 +11,13 @@ class main_window(QMainWindow):
         self.db = ConnectDatabase()
 
         self.load_data()
+        self.view_btn_2.clicked.connect(self.display_genres)
 
     def load_data(self):
         try:
             if not self.db or not self.db.cursor:
                 raise Exception("Database not connected.")
-
+            
             query = '''
                 SELECT 
                     m.movie_id,
@@ -38,6 +39,30 @@ class main_window(QMainWindow):
             results = self.db.cursor.fetchall()
 
             headers = ["ID", "Title", "Year", "Genre", "Studio"]
+            self.tableWidget.setColumnCount(len(headers))
+            self.tableWidget.setHorizontalHeaderLabels(headers)
+            self.tableWidget.setRowCount(len(results))
+
+            for row_idx, row_data in enumerate(results):
+                for col_idx, value in enumerate(row_data):
+                    self.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
+
+            self.tableWidget.resizeColumnsToContents()
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
+
+    def display_genres(self):
+        try:
+            if not self.db or not self.db.cursor:
+                raise Exception("Database not connected.")
+
+            query = 'SELECT * FROM genre'
+
+            self.db.cursor.execute(query)
+            results = self.db.cursor.fetchall()
+
+            headers = ["Genre ID", "Genre Name"]
             self.tableWidget.setColumnCount(len(headers))
             self.tableWidget.setHorizontalHeaderLabels(headers)
             self.tableWidget.setRowCount(len(results))
