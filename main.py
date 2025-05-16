@@ -40,28 +40,19 @@ class main_window(QMainWindow):
             results = self.db.cursor.fetchall()
 
             headers = ["ID", "Title", "Year", "Genre", "Studio"]
-            self.main_table.setColumnCount(len(headers))
-            self.main_table.setHorizontalHeaderLabels(headers)
-            self.main_table.setRowCount(len(results))
+            self.tableWidget.setColumnCount(len(headers))
+            self.tableWidget.setHorizontalHeaderLabels(headers)
+            self.tableWidget.setRowCount(len(results))
 
             for row_idx, row_data in enumerate(results):
                 for col_idx, value in enumerate(row_data):
-                    self.main_table.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
+                    self.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
 
-            self.main_table.resizeColumnsToContents()
+            self.tableWidget.resizeColumnsToContents()
 
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
 
-    def type_search(self):
-
-        movies = ('Apple', 'Facebook', 'Google', 'Amazon', 'Walmart', 'Dropbox', 'Starbucks', 'eBay', 'Canon')
-        model = QStandardItemModel(len(movies), 1)
-
-        filter_proxy_model = QSortFilterProxyModel()
-        filter_proxy_model.setSourceModel(model)
-        filter_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
-        filter_proxy_model.setFilterKeyColumn(0)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
