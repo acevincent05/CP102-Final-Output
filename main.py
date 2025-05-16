@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QTableWidgetItem, QTableWidget, QLabel, QDialog, QFormLayout
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QTableWidgetItem, QTableWidget, QLabel, QDialog, QFormLayout, QPushButton
 from PyQt5.uic import loadUi
 import sys
 from connect_database import ConnectDatabase
@@ -12,7 +12,7 @@ class main_window(QMainWindow):
 
         self.display_all()
 
-        #initializes buttons
+        #initialize buttons
         self.show_all_movies.clicked.connect(self.display_all)
         self.show_genres.clicked.connect(self.display_genres)
         self.show_studios.clicked.connect(self.display_studios)
@@ -30,19 +30,62 @@ class main_window(QMainWindow):
         selected_items = self.tableWidget.selectedItems()
         
         if not selected_items:
-            return  # No selection
+            QMessageBox.warning(self, "No Selection", "Please select a movie first.")
+            return None
         
-        # Get all data from the selected row
         row = selected_items[0].row()
-        row_data = []
-        for col in range(self.tableWidget.columnCount()):
-            item = self.tableWidget.item(row, col)
-            row_data.append(item.text() if item else "")
+        movie_id_item = self.tableWidget.item(row, 0)
         
-        # Create and show the details dialog
-        dialog = MovieDetailsDialog(row_data, self)
-        dialog.exec_()
- 
+        if not movie_id_item:
+            QMessageBox.warning(self, "Error", "Could not get movie ID.")
+            return None
+        
+        movie_id = movie_id_item.text()
+        
+        try:
+            if not self.db or not self.db.cursor:
+                raise Exception("Database not connected.")
+            
+            cursor = self.db.cursor
+            query = '''
+                SELECT 
+                    m.movie_id,
+                    m.movie_name,
+                    m.release_year,
+                    g.genre_id, 
+                    g.genre_name,
+                    s.studio_name,
+                    s.studio_id,
+                    s.founded_year,
+                    s.headquarters
+                FROM 
+                    movie m
+                JOIN 
+                    genre g ON m.genre_id = g.genre_id
+                JOIN 
+                    studio s ON m.studio_id = s.studio_id
+                WHERE 
+                    m.movie_id = %s
+                ORDER BY 
+                    m.movie_id;
+            '''
+            
+            # Note: Changed from ? to %s for MySQL and fixed parameter passing
+            cursor.execute(query, (movie_id,))
+            row_data = cursor.fetchone()
+            
+            if not row_data:
+                QMessageBox.warning(self, "Not Found", "No details found for selected movie.")
+                return None
+
+            dialog = MovieDetailsDialog(row_data, self)
+            dialog.exec_()
+            return row_data
+    
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
+            return None
+
     
     def display_all(self):
         try:
@@ -139,17 +182,33 @@ class MovieDetailsDialog(QDialog):
     def __init__(self, movie_data, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Movie Details")
-        self.setModal(True)  # Makes the dialog modal
-        self.resize(300, 200)
+        self.setModal(True)
+        self.resize(400, 300)  # Increased size to accommodate more fields
         
         layout = QFormLayout()
         
-        # Create labels for each piece of data
-        layout.addRow("ID:", QLabel(movie_data[0]))
-        layout.addRow("Title:", QLabel(movie_data[1]))
-        layout.addRow("Year:", QLabel(movie_data[2]))
-        layout.addRow("Genre:", QLabel(movie_data[3]))
-        layout.addRow("Studio:", QLabel(movie_data[4]))
+        # Movie Information Section
+        layout.addRow(QLabel("<b>Movie Information</b>"))
+        layout.addRow("ID:", QLabel(str(movie_data[0])))
+        layout.addRow("Title:", QLabel(str(movie_data[1])))
+        layout.addRow("Release Year:", QLabel(str(movie_data[2])))
+        
+        # Genre Information Section
+        layout.addRow(QLabel("<b>Genre Information</b>"))
+        layout.addRow("Genre ID:", QLabel(str(movie_data[3])))
+        layout.addRow("Genre Name:", QLabel(str(movie_data[4])))
+        
+        # Studio Information Section
+        layout.addRow(QLabel("<b>Studio Information</b>"))
+        layout.addRow("Studio Name:", QLabel(str(movie_data[5])))
+        layout.addRow("Studio ID:", QLabel(str(movie_data[6])))
+        layout.addRow("Founded Year:", QLabel(str(movie_data[7])))
+        layout.addRow("Headquarters:", QLabel(str(movie_data[8])))
+        
+        # Add a close button
+        close_btn = QPushButton("Close")
+        close_btn.clicked.connect(self.close)
+        layout.addRow(close_btn)
         
         self.setLayout(layout)
 

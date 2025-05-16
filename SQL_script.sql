@@ -64,4 +64,44 @@ JOIN
 JOIN 
     studio s ON m.studio_id = s.studio_id
 ORDER BY 
-    m.movie_id;genre_id
+    m.movie_id;
+    genre_id;
+    
+SELECT * FROM studio;
+
+SELECT 
+	m.movie_id,
+    m.movie_name,
+    m.release_year,
+    g.genre_name,
+    s.studio_name
+FROM 
+    movie m
+JOIN 
+    genre g ON m.genre_id = g.genre_id
+JOIN 
+    studio s ON m.studio_id = s.studio_id
+ORDER BY 
+    m.movie_id;genre_id;
+    
+    
+SELECT 
+    m.movie_id,
+    m.movie_name,
+    m.release_year,
+    g.genre_id, 
+    g.genre_name,
+    s.studio_name,
+    s.studio_id,
+    s.founded_year,
+    s.headquarters
+FROM 
+    movie m
+JOIN 
+    genre g ON m.genre_id = g.genre_id
+JOIN 
+    studio s ON m.studio_id = s.studio_id
+WHERE 
+    m.movie_id = 'M001' 
+ORDER BY 
+    m.movie_id;
