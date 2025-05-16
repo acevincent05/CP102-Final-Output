@@ -120,7 +120,7 @@
      <rect>
       <x>30</x>
       <y>490</y>
-      <width>341</width>
+      <width>351</width>
       <height>41</height>
      </rect>
     </property>
@@ -133,12 +133,12 @@
      <string>Search</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="view_btn_2">
+   <widget class="QPushButton" name="show_genres">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>540</x>
       <y>490</y>
-      <width>181</width>
+      <width>131</width>
       <height>41</height>
      </rect>
     </property>
@@ -146,17 +146,30 @@
      <string>SHOW GENRES</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="view_btn_3">
+   <widget class="QPushButton" name="show_studios">
     <property name="geometry">
      <rect>
-      <x>630</x>
+      <x>680</x>
       <y>490</y>
-      <width>181</width>
+      <width>131</width>
       <height>41</height>
      </rect>
     </property>
     <property name="text">
      <string>SHOW STUDIOS</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="show_all_movies">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>490</y>
+      <width>131</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>SHOW ALL</string>
     </property>
    </widget>
   </widget>

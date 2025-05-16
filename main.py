@@ -10,10 +10,13 @@ class main_window(QMainWindow):
         
         self.db = ConnectDatabase()
 
-        self.load_data()
-        self.view_btn_2.clicked.connect(self.display_genres)
+        self.display_all()
+        self.show_all_movies.clicked.connect(self.display_all)
+        self.show_genres.clicked.connect(self.display_genres)
+        self.show_studios.clicked.connect(self.display_studios)
+        
 
-    def load_data(self):
+    def display_all(self):
         try:
             if not self.db or not self.db.cursor:
                 raise Exception("Database not connected.")
@@ -76,6 +79,29 @@ class main_window(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
 
+    def display_studios(self):
+        try:
+            if not self.db or not self.db.cursor:
+                raise Exception("Database not connected.")
+
+            query = 'SELECT * FROM studio'
+
+            self.db.cursor.execute(query)
+            results = self.db.cursor.fetchall()
+
+            headers = ["Studio ID", "Studio Name", "Year Founded", "Headquartes"]
+            self.tableWidget.setColumnCount(len(headers))
+            self.tableWidget.setHorizontalHeaderLabels(headers)
+            self.tableWidget.setRowCount(len(results))
+
+            for row_idx, row_data in enumerate(results):
+                for col_idx, value in enumerate(row_data):
+                    self.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
+
+            self.tableWidget.resizeColumnsToContents()
+
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
