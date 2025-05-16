@@ -1,63 +1,58 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QTableWidgetItem, QTableWidget, QLabel, QDialog
-from PyQt5.uic import loadUi
-import sys
-from connect_database import ConnectDatabase
-from MovieDetailsDialog import MovieDetailsDialog
-from AddMovieDialog import AddMovieDetailsDialog
-from EditMovieDetailsDialog import EditMovieDetailsDialog
+from PyQt5.QtWidgets import (QMainWindow, QApplication, QMessageBox, 
+                             QTableWidgetItem, QTableWidget, QLabel, QDialog) # for PyQt5 features
+from PyQt5.uic import loadUi # directly loads the ui file
+import sys #
+from connect_database import ConnectDatabase #separate python file for DB connection
+from MovieDetailsDialog import MovieDetailsDialog #separate python file movie details
+from AddMovieDialog import AddMovieDetailsDialog #separate python file for inputting new movies
+from EditMovieDetailsDialog import EditMovieDetailsDialog #separate python file for inputting movies to edit
 
-class main_window(QMainWindow):
-    def __init__(self):
-        super(main_window, self).__init__()
-        loadUi("main.ui", self)
+class main_window(QMainWindow): # the main window
+    def __init__(self): 
+        super(main_window, self).__init__() # initializes the window's function
+        loadUi("main.ui", self) # directly loads the main UI without converting it to a py file
         
-        self.db = ConnectDatabase()
+        self.db = ConnectDatabase() # connect to MySQL DB
 
-        self.display_all()
+        self.display_all() # displays the current datas on the table
 
-        #initialize buttons
-        self.show_all_movies.clicked.connect(self.display_all)
-        self.show_genres.clicked.connect(self.display_genres)
-        self.show_studios.clicked.connect(self.display_studios)
-        
-        self.view_btn.clicked.connect(self.get_selected_data)
-        
-        self.add_btn.clicked.connect(self.open_add_movie_dialog) # Connect to a new method
-        
-        self.edit_btn.clicked.connect(self.open_edit_movie_dialog) 
+        self.show_all_movies.clicked.connect(self.display_all) # shows main table
+        self.show_genres.clicked.connect(self.display_genres) # shows genres table
+        self.show_studios.clicked.connect(self.display_studios) # shows studios table
 
-        # Connect the new Delete button
-        self.delete_btn.clicked.connect(self.delete_movie)  # Connect delete_movie
+        self.view_btn.clicked.connect(self.get_selected_data) #view button
+        self.add_btn.clicked.connect(self.open_add_movie_dialog) # add button
+        self.edit_btn.clicked.connect(self.open_edit_movie_dialog) # edit button
+        self.delete_btn.clicked.connect(self.delete_movie)  # delete button
 
-        # Button to get selected data
-        #self.view_btn.clicked.connect(self.get_selected_data)
-        
-        # Label to display results
-        self.result_label = QLabel('Selected data will appear here')
-
+    # edit a certain movie in the DB 
     def open_edit_movie_dialog(self):
-        selected_items = self.tableWidget.selectedItems()
+        selected_items = self.tableWidget.selectedItems() # select movie through clicking rows
         
-        if not selected_items:
+        if not selected_items: # if nothing was selected or empty
             QMessageBox.warning(self, "No Selection", "Please select a movie to edit.")
             return
 
-        row = selected_items[0].row()
-        movie_id_item = self.tableWidget.item(row, 0) # Assuming movie_id is in the first column
+        # selects the specific cell
+        row = selected_items[0].row() 
+        movie_id_item = self.tableWidget.item(row, 0) 
         
+        # handle error for invalid input
         if not movie_id_item:
             QMessageBox.warning(self, "Error", "Could not get movie ID for editing.")
             return
-            
+
+        # movie ID as text     
         movie_id = movie_id_item.text()
 
         try:
-            if not self.db or not self.db.cursor:
+            if not self.db or not self.db.cursor: # handles DB connection error
                 raise Exception("Database not connected.")
             
             cursor = self.db.cursor
-            # THIS QUERY IS CRUCIAL FOR FETCHING ALL DETAILS
-            query = '''
+            
+            # DB query for fetching details later 
+            query = ''' 
                 SELECT 
                     m.movie_id,
                     m.movie_name,
@@ -77,47 +72,53 @@ class main_window(QMainWindow):
                 WHERE 
                     m.movie_id = %s;
             '''
-            
+            # executing the query with the inputted primary key
             cursor.execute(query, (movie_id,))
-            movie_data = cursor.fetchone() # This fetches the ONE row of detailed data
+            movie_data = cursor.fetchone() # fetching the selected movie
             
-            if not movie_data:
+            if not movie_data: # handle invalid selection
                 QMessageBox.warning(self, "Not Found", "No details found for selected movie to edit.")
                 return
 
-            # This line passes the fetched movie_data to the dialog
+            # passes the fetched movie_data to the dialog
             dialog = EditMovieDetailsDialog(self.db, movie_data)
             if dialog.exec_() == QDialog.Accepted:
-                self.display_all() # Refresh table after successful edit
+                self.display_all() # refresh table after successful edit
         
-        except Exception as e:
+        except Exception as e: # handles error when loading data from DB
             QMessageBox.critical(self, "Error", f"Could not load movie data for editing:\n{str(e)}")
 
-    def open_add_movie_dialog(self):
-        dialog = AddMovieDetailsDialog(self.db)
+    # add a movie with its details
+    def open_add_movie_dialog(self): 
+        dialog = AddMovieDetailsDialog(self.db) # dialog for inputting details
         if dialog.exec_() == QDialog.Accepted:
-            self.display_all() # Refresh the main table after adding a movie
+            self.display_all() # refresh the main table after adding a movie
 
+    # view a movie's details
     def get_selected_data(self):
-        selected_items = self.tableWidget.selectedItems()
+        selected_items = self.tableWidget.selectedItems() # selecting row by just clicking
         
-        if not selected_items:
+        if not selected_items: # handles invalid selections
             QMessageBox.warning(self, "No Selection", "Please select a movie first.")
             return None
         
+        # selects the specific cell
         row = selected_items[0].row()
         movie_id_item = self.tableWidget.item(row, 0)
         
+        # handle error for invalid input
         if not movie_id_item:
             QMessageBox.warning(self, "Error", "Could not get movie ID.")
             return None
         
+        # movie ID as text
         movie_id = movie_id_item.text()
         
         try:
-            if not self.db or not self.db.cursor:
+            if not self.db or not self.db.cursor: # handles DB connection error
                 raise Exception("Database not connected.")
             
+            # DB query for fetching details later 
             cursor = self.db.cursor
             query = '''
                 SELECT 
@@ -142,71 +143,72 @@ class main_window(QMainWindow):
                     m.movie_id;
             '''
             
-            # Note: Changed from ? to %s for MySQL and fixed parameter passing
+            # executing the query with the inputted primary key
             cursor.execute(query, (movie_id,))
-            row_data = cursor.fetchone()
+            row_data = cursor.fetchone() # fetching the selected movie
             
-            if not row_data:
+            if not row_data: # handles invalid selections
                 QMessageBox.warning(self, "Not Found", "No details found for selected movie.")
                 return None
 
-            dialog = MovieDetailsDialog(row_data, self)
+            dialog = MovieDetailsDialog(row_data, self) # opens the details of the movie in a dialog
             dialog.exec_()
             return row_data
     
-        except Exception as e:
+        except Exception as e: # handles error when loading data from DB
             QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
             return None
         
     def delete_movie(self):
-        """Deletes the selected movie from the database after confirmation."""
-        selected_items = self.tableWidget.selectedItems()
+        selected_items = self.tableWidget.selectedItems() #Deletes the selected movie from the database after confirmation.
 
-        if not selected_items:
+        if not selected_items: # handles invalid selections
             QMessageBox.warning(self, "No Selection", "Please select a movie to delete.")
             return
 
         row = selected_items[0].row()
-        movie_id_item = self.tableWidget.item(row, 0)  # Get Movie ID from the first column
+        movie_id_item = self.tableWidget.item(row, 0)  # get Movie ID from the first column
 
-        if not movie_id_item:
+        if not movie_id_item: # handles invalid inputs
             QMessageBox.warning(self, "Error", "Could not get movie ID for deletion.")
             return
 
-        movie_id = movie_id_item.text()
+        # movie ID as text
+        movie_id = movie_id_item.text() 
 
         # Confirmation dialog
         confirmation = QMessageBox.question(
             self,
             "Confirm Delete",
             f"Are you sure you want to delete movie with ID {movie_id}?",
-            QMessageBox.Yes | QMessageBox.No,  # Use Yes and No buttons
-            QMessageBox.No,  # Default button is No
+            QMessageBox.Yes | QMessageBox.No,  # use Yes and No buttons
+            QMessageBox.No,  # default button is No
         )
 
-        if confirmation == QMessageBox.Yes:
+        if confirmation == QMessageBox.Yes: # proceeds to deletion
             try:
                 if not self.db or not self.db.cursor:
                     raise Exception("Database not connected.")
 
                 cursor = self.db.cursor
-                query = "DELETE FROM movie WHERE movie_id = %s"
+                query = "DELETE FROM movie WHERE movie_id = %s" # uses primary to delete
                 cursor.execute(query, (movie_id,))
                 self.db.con.commit()  # Use self.db.con to commit
 
                 QMessageBox.information(self, "Success", "Movie deleted successfully!")
-                self.display_all()  # Refresh the table after deletion
+                self.display_all()  # refresh the table after deletion
 
             except Exception as e:
                 self.db.con.rollback()  # Use self.db.con to rollback
                 QMessageBox.critical(self, "Error", f"Could not delete movie:\n{str(e)}")   
 
-
+    # shows all current movies in the database
     def display_all(self):
         try:
-            if not self.db or not self.db.cursor:
+            if not self.db or not self.db.cursor: # handles DB connection error
                 raise Exception("Database not connected.")
             
+            # DB query for fetching details later 
             query = '''
                 SELECT 
                     m.movie_id,
@@ -223,42 +225,44 @@ class main_window(QMainWindow):
                 ORDER BY 
                     m.movie_id;
             '''
-
+            # executing the query 
             self.db.cursor.execute(query)
-            results = self.db.cursor.fetchall()
+            results = self.db.cursor.fetchall() # fetching all the datas in the table
 
-            headers = ["ID", "Title", "Year", "Genre", "Studio"]
-            self.tableWidget.setColumnCount(len(headers))
-            self.tableWidget.setHorizontalHeaderLabels(headers)
-            self.tableWidget.setRowCount(len(results))
+            headers = ["ID", "Title", "Year", "Genre", "Studio"] # name of the headers that will be displayed
+            self.tableWidget.setColumnCount(len(headers)) # counts columns
+            self.tableWidget.setHorizontalHeaderLabels(headers) # assign the headers that will be shown
+            self.tableWidget.setRowCount(len(results)) # counts rows
 
+            # builds the table based on the number of columns and rows while placing their data
             for row_idx, row_data in enumerate(results):
                 for col_idx, value in enumerate(row_data):
                     self.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
 
-            self.tableWidget.resizeColumnsToContents()
+            self.tableWidget.resizeColumnsToContents() # resizes the columns based on text length
 
-            # Enable row selection
+            # enables row selection
             self.tableWidget.setSelectionBehavior(QTableWidget.SelectRows)
             self.tableWidget.setSelectionMode(QTableWidget.SingleSelection)
 
-        except Exception as e:
+        except Exception as e: # handles error when loading data from DB
             QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
 
+    # display the genre table 
     def display_genres(self):
         try:
-            if not self.db or not self.db.cursor:
+            if not self.db or not self.db.cursor: # handles database connection failure
                 raise Exception("Database not connected.")
 
-            query = 'SELECT * FROM genre'
+            query = 'SELECT * FROM genre' # query for selecting all contents in the table
 
-            self.db.cursor.execute(query)
-            results = self.db.cursor.fetchall()
+            self.db.cursor.execute(query) # executing the query
+            results = self.db.cursor.fetchall() # fetching the data
 
-            headers = ["Genre ID", "Genre Name"]
-            self.tableWidget.setColumnCount(len(headers))
-            self.tableWidget.setHorizontalHeaderLabels(headers)
-            self.tableWidget.setRowCount(len(results))
+            headers = ["Genre ID", "Genre Name"] # for headers to be displayed 
+            self.tableWidget.setColumnCount(len(headers)) # counts number of columns
+            self.tableWidget.setHorizontalHeaderLabels(headers) # assign the headers that will be shown
+            self.tableWidget.setRowCount(len(results)) # counts rows
 
             for row_idx, row_data in enumerate(results):
                 for col_idx, value in enumerate(row_data):
