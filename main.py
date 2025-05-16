@@ -1,4 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QTableWidgetItem
+from PyQt5.QtCore import Qt, QSortFilterProxyModel
+from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.uic import loadUi
 import sys
 from connect_database import ConnectDatabase
@@ -9,13 +11,6 @@ class main_window(QMainWindow):
         loadUi("main.ui", self)
         
         self.db = ConnectDatabase()
-
-        # Optional column resizing if desired
-        # self.main_table.setColumnWidth(0, 100)
-        # self.main_table.setColumnWidth(1, 250)
-        # self.main_table.setColumnWidth(2, 100)
-        # self.main_table.setColumnWidth(3, 100)
-        # self.main_table.setColumnWidth(4, 215)
 
         self.load_data()
 
@@ -57,6 +52,16 @@ class main_window(QMainWindow):
 
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
+
+    def type_search(self):
+
+        movies = ('Apple', 'Facebook', 'Google', 'Amazon', 'Walmart', 'Dropbox', 'Starbucks', 'eBay', 'Canon')
+        model = QStandardItemModel(len(movies), 1)
+
+        filter_proxy_model = QSortFilterProxyModel()
+        filter_proxy_model.setSourceModel(model)
+        filter_proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
+        filter_proxy_model.setFilterKeyColumn(0)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
