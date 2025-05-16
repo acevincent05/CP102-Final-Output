@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>842</width>
-    <height>617</height>
+    <height>567</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,16 +43,31 @@
      <rect>
       <x>30</x>
       <y>130</y>
-      <width>781</width>
-      <height>321</height>
+      <width>561</width>
+      <height>331</height>
      </rect>
     </property>
+    <attribute name="horizontalHeaderVisible">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="horizontalHeaderCascadingSectionResizes">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderHighlightSections">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="horizontalHeaderStretchLastSection">
+     <bool>true</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
+     <bool>true</bool>
+    </attribute>
    </widget>
    <widget class="QPushButton" name="view_btn">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>490</y>
+      <x>630</x>
+      <y>130</y>
       <width>181</width>
       <height>71</height>
      </rect>
@@ -64,8 +79,8 @@
    <widget class="QPushButton" name="add_btn">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>490</y>
+      <x>630</x>
+      <y>220</y>
       <width>181</width>
       <height>71</height>
      </rect>
@@ -77,8 +92,8 @@
    <widget class="QPushButton" name="edit_btn">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>490</y>
+      <x>630</x>
+      <y>300</y>
       <width>181</width>
       <height>71</height>
      </rect>
@@ -91,13 +106,57 @@
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>490</y>
+      <y>390</y>
       <width>181</width>
       <height>71</height>
      </rect>
     </property>
     <property name="text">
      <string>DELETE</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>490</y>
+      <width>341</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QLineEdit {
+	padding-left: 20px;
+}</string>
+    </property>
+    <property name="placeholderText">
+     <string>Search</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="view_btn_2">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>490</y>
+      <width>181</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>SHOW GENRES</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="view_btn_3">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>490</y>
+      <width>181</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>SHOW STUDIOS</string>
     </property>
    </widget>
   </widget>
