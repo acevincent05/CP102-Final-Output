@@ -5,7 +5,7 @@ class MovieDetailsDialog(QDialog):
         super().__init__(parent)
         self.setWindowTitle("Movie Details")
         self.setModal(True)
-        self.resize(400, 300)  # Increased size to accommodate more fields
+        self.resize(400, 300)  
         
         layout = QFormLayout()
         
