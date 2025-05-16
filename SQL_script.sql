@@ -64,4 +64,4 @@ JOIN
 JOIN 
     studio s ON m.studio_id = s.studio_id
 ORDER BY 
-    m.movie_id;
+    m.movie_id;genre_id
