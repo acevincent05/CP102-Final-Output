@@ -234,7 +234,7 @@ class main_window(QMainWindow): # the main window
             self.tableWidget.setHorizontalHeaderLabels(headers) # assign the headers that will be shown
             self.tableWidget.setRowCount(len(results)) # counts rows
 
-            # builds the table based on the number of columns and rows while placing their data
+            # builds the table based on the number of columns and rows while also placing their data
             for row_idx, row_data in enumerate(results):
                 for col_idx, value in enumerate(row_data):
                     self.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
@@ -264,39 +264,43 @@ class main_window(QMainWindow): # the main window
             self.tableWidget.setHorizontalHeaderLabels(headers) # assign the headers that will be shown
             self.tableWidget.setRowCount(len(results)) # counts rows
 
+            # builds the table based on the number of columns and rows while also placing their data
             for row_idx, row_data in enumerate(results):
                 for col_idx, value in enumerate(row_data):
                     self.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
 
-            self.tableWidget.resizeColumnsToContents()
+            self.tableWidget.resizeColumnsToContents() # resizes the columns based on text length
 
-        except Exception as e:
+        except Exception as e: # handles error when loading data from DB
             QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
 
+    # displays the studios table
     def display_studios(self):
         try:
-            if not self.db or not self.db.cursor:
-                raise Exception("Database not connected.")
+            if not self.db or not self.db.cursor: # handles database connection failure
+                raise Exception("Database not connected.") 
 
-            query = 'SELECT * FROM studio'
+            query = 'SELECT * FROM studio' # query for selecting all contents in the table
 
-            self.db.cursor.execute(query)
-            results = self.db.cursor.fetchall()
+            self.db.cursor.execute(query) # executing the query
+            results = self.db.cursor.fetchall() # fetching the data
 
-            headers = ["Studio ID", "Studio Name", "Year Founded", "Headquartes"]
-            self.tableWidget.setColumnCount(len(headers))
-            self.tableWidget.setHorizontalHeaderLabels(headers)
-            self.tableWidget.setRowCount(len(results))
+            headers = ["Studio ID", "Studio Name", "Year Founded", "Headquartes"] # for headers to be displayed
+            self.tableWidget.setColumnCount(len(headers)) # counts number of columns
+            self.tableWidget.setHorizontalHeaderLabels(headers) # assign the headers that will be shown
+            self.tableWidget.setRowCount(len(results)) # counts rows
 
+            # builds the table based on the number of columns and rows while also placing their data
             for row_idx, row_data in enumerate(results):
                 for col_idx, value in enumerate(row_data):
                     self.tableWidget.setItem(row_idx, col_idx, QTableWidgetItem(str(value)))
 
-            self.tableWidget.resizeColumnsToContents()
+            self.tableWidget.resizeColumnsToContents() # resizes the columns based on text length
 
-        except Exception as e:
+        except Exception as e: # handles error when loading data from DB
             QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
 
+# executes the program in the main window
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = main_window()
