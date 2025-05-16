@@ -1,7 +1,8 @@
 import mysql.connector
 
+# for database connection
 class ConnectDatabase:
-    def __init__(self):
+    def __init__(self): # intializes MySQL credentials
         self._user = "root"
         self._password = "CS2025EU"
         self._database = "movie_manager"
@@ -9,7 +10,7 @@ class ConnectDatabase:
         self.cursor = None
         self.connect()
 
-    def connect(self):
+    def connect(self): # connects to the database with credentials
         try:
             self.con = mysql.connector.connect(
                 user=self._user,
