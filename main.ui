@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>842</width>
-    <height>567</height>
+    <height>557</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -102,7 +102,7 @@
      <string>EDIT</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="delete_button">
+   <widget class="QPushButton" name="delete_btn">
     <property name="geometry">
      <rect>
       <x>630</x>
@@ -115,30 +115,12 @@
      <string>DELETE</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="type_search">
+   <widget class="QPushButton" name="show_genres">
     <property name="geometry">
      <rect>
       <x>30</x>
       <y>490</y>
-      <width>351</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">QLineEdit {
-	padding-left: 20px;
-}</string>
-    </property>
-    <property name="placeholderText">
-     <string>Search</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="show_genres">
-    <property name="geometry">
-     <rect>
-      <x>540</x>
-      <y>490</y>
-      <width>131</width>
+      <width>181</width>
       <height>41</height>
      </rect>
     </property>
@@ -149,9 +131,9 @@
    <widget class="QPushButton" name="show_studios">
     <property name="geometry">
      <rect>
-      <x>680</x>
+      <x>410</x>
       <y>490</y>
-      <width>131</width>
+      <width>181</width>
       <height>41</height>
      </rect>
     </property>
@@ -162,9 +144,9 @@
    <widget class="QPushButton" name="show_all_movies">
     <property name="geometry">
      <rect>
-      <x>400</x>
+      <x>220</x>
       <y>490</y>
-      <width>131</width>
+      <width>181</width>
       <height>41</height>
      </rect>
     </property>

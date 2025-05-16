@@ -1,29 +1,28 @@
+# EditMovieDetailsDialog.py
 from PyQt5.QtWidgets import QDialog, QMessageBox
 from PyQt5.uic import loadUi
 
 class EditMovieDetailsDialog(QDialog):
-    def __init__(self, db_connection, movie_data):
+    def __init__(self, db_connection, movie_data): # Receives pre-fetched movie_data
         super(EditMovieDetailsDialog, self).__init__()
-        loadUi("AddMovieDialog.ui", self) # We can reuse the same UI file as Add, but adapt the logic
+        loadUi("AddMovieDialog.ui", self) # Reuses the same UI file
         self.db = db_connection
-        self.movie_data = movie_data
-        
-        # Populate fields with existing data
-        self.populate_fields()
-        
-        # Change the button text and connect to the update method
-        # Assuming your button is named 'add_movie_button' in AddMovieDialog.ui
-        self.add_movie_button.setText("Update Movie") 
-        self.add_movie_button.clicked.connect(self.update_movie)
+        self.movie_data = movie_data # Store the data for populating fields
+
+        self.populate_fields() # Call this to fill the fields on dialog open
+
+        # Change button text and connect to update function
+        # Make sure 'add_movie_button' is the objectName of your Add/OK button in AddMovieDialog.ui
+        self.buttonBox.clicked.connect(self.update_movie)
 
     def populate_fields(self):
-        # Unpack the movie_data tuple
-        # Ensure the order matches your SELECT query in get_selected_data in main_window.py
-        # m.movie_id, m.movie_name, m.release_year, g.genre_id, g.genre_name,
-        # s.studio_name, s.studio_id, s.founded_year, s.headquarters
+        # Unpack the movie_data tuple.
+        # IMPORTANT: Order MUST match the SELECT query in main_window.py's open_edit_movie_dialog
         (movie_id, movie_name, release_year, genre_id, genre_name, 
          studio_name, studio_id, founded_year, headquarters) = self.movie_data
 
+        # Populate the QLineEdit fields
+        # IMPORTANT: These object names MUST match your AddMovieDialog.ui
         self.add_movie_id.setText(str(movie_id))
         self.add_movie_id.setEnabled(False) # Movie ID usually shouldn't be editable
         self.add_movie_title.setText(movie_name)
@@ -38,7 +37,7 @@ class EditMovieDetailsDialog(QDialog):
 
     def update_movie(self):
         # Get updated data from the QLineEdit fields
-        movie_id = self.add_movie_id.text() # Get the ID (it's disabled but still accessible)
+        movie_id = self.add_movie_id.text() 
         movie_title = self.add_movie_title.text()
         release_year = self.add_movie_year.text()
         genre_id = self.add_genre_id.text()
@@ -48,7 +47,7 @@ class EditMovieDetailsDialog(QDialog):
         founded_year = self.add_founded_year.text()
         headquarters = self.add_headquarters.text()
 
-        # Basic validation (same as add)
+        # Basic validation
         if not all([movie_id, movie_title, release_year, genre_id, genre_name, studio_id, studio_name, founded_year, headquarters]):
             QMessageBox.warning(self, "Missing Data", "Please fill in all fields.")
             return
@@ -75,11 +74,11 @@ class EditMovieDetailsDialog(QDialog):
                 WHERE movie_id = %s
             """
             self.db.cursor.execute(query, (movie_title, release_year, genre_id, studio_id, movie_id))
-            
-            self.db.con.commit() # Use self.db.con for commit
-            
+
+            self.db.con.commit() # Use self.db.con
+
             QMessageBox.information(self, "Success", "Movie updated successfully!")
-            self.accept() # Close the dialog if successful
+            self.accept() # Close the dialog with Accepted status
         except Exception as e:
-            self.db.con.rollback() # Use self.db.con for rollback
+            self.db.con.rollback() # Use self.db.con
             QMessageBox.critical(self, "Error", f"Could not update movie: {str(e)}")

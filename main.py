@@ -4,6 +4,7 @@ import sys
 from connect_database import ConnectDatabase
 from MovieDetailsDialog import MovieDetailsDialog
 from AddMovieDialog import AddMovieDetailsDialog
+from EditMovieDetailsDialog import EditMovieDetailsDialog
 
 class main_window(QMainWindow):
     def __init__(self):
@@ -23,11 +24,74 @@ class main_window(QMainWindow):
         
         self.add_btn.clicked.connect(self.open_add_movie_dialog) # Connect to a new method
         
+        self.edit_btn.clicked.connect(self.open_edit_movie_dialog) 
+
+        # Connect the new Delete button
+        self.delete_btn.clicked.connect(self.delete_movie)  # Connect delete_movie
+
         # Button to get selected data
         #self.view_btn.clicked.connect(self.get_selected_data)
         
         # Label to display results
         self.result_label = QLabel('Selected data will appear here')
+
+    def open_edit_movie_dialog(self):
+        selected_items = self.tableWidget.selectedItems()
+        
+        if not selected_items:
+            QMessageBox.warning(self, "No Selection", "Please select a movie to edit.")
+            return
+
+        row = selected_items[0].row()
+        movie_id_item = self.tableWidget.item(row, 0) # Assuming movie_id is in the first column
+        
+        if not movie_id_item:
+            QMessageBox.warning(self, "Error", "Could not get movie ID for editing.")
+            return
+            
+        movie_id = movie_id_item.text()
+
+        try:
+            if not self.db or not self.db.cursor:
+                raise Exception("Database not connected.")
+            
+            cursor = self.db.cursor
+            # THIS QUERY IS CRUCIAL FOR FETCHING ALL DETAILS
+            query = '''
+                SELECT 
+                    m.movie_id,
+                    m.movie_name,
+                    m.release_year,
+                    g.genre_id,  -- Make sure genre_id is selected
+                    g.genre_name,
+                    s.studio_name,
+                    s.studio_id, -- Make sure studio_id is selected
+                    s.founded_year,
+                    s.headquarters
+                FROM 
+                    movie m
+                JOIN 
+                    genre g ON m.genre_id = g.genre_id
+                JOIN 
+                    studio s ON m.studio_id = s.studio_id
+                WHERE 
+                    m.movie_id = %s;
+            '''
+            
+            cursor.execute(query, (movie_id,))
+            movie_data = cursor.fetchone() # This fetches the ONE row of detailed data
+            
+            if not movie_data:
+                QMessageBox.warning(self, "Not Found", "No details found for selected movie to edit.")
+                return
+
+            # This line passes the fetched movie_data to the dialog
+            dialog = EditMovieDetailsDialog(self.db, movie_data)
+            if dialog.exec_() == QDialog.Accepted:
+                self.display_all() # Refresh table after successful edit
+        
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Could not load movie data for editing:\n{str(e)}")
 
     def open_add_movie_dialog(self):
         dialog = AddMovieDetailsDialog(self.db)
@@ -93,6 +157,49 @@ class main_window(QMainWindow):
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
             return None
+        
+    def delete_movie(self):
+        """Deletes the selected movie from the database after confirmation."""
+        selected_items = self.tableWidget.selectedItems()
+
+        if not selected_items:
+            QMessageBox.warning(self, "No Selection", "Please select a movie to delete.")
+            return
+
+        row = selected_items[0].row()
+        movie_id_item = self.tableWidget.item(row, 0)  # Get Movie ID from the first column
+
+        if not movie_id_item:
+            QMessageBox.warning(self, "Error", "Could not get movie ID for deletion.")
+            return
+
+        movie_id = movie_id_item.text()
+
+        # Confirmation dialog
+        confirmation = QMessageBox.question(
+            self,
+            "Confirm Delete",
+            f"Are you sure you want to delete movie with ID {movie_id}?",
+            QMessageBox.Yes | QMessageBox.No,  # Use Yes and No buttons
+            QMessageBox.No,  # Default button is No
+        )
+
+        if confirmation == QMessageBox.Yes:
+            try:
+                if not self.db or not self.db.cursor:
+                    raise Exception("Database not connected.")
+
+                cursor = self.db.cursor
+                query = "DELETE FROM movie WHERE movie_id = %s"
+                cursor.execute(query, (movie_id,))
+                self.db.con.commit()  # Use self.db.con to commit
+
+                QMessageBox.information(self, "Success", "Movie deleted successfully!")
+                self.display_all()  # Refresh the table after deletion
+
+            except Exception as e:
+                self.db.con.rollback()  # Use self.db.con to rollback
+                QMessageBox.critical(self, "Error", f"Could not delete movie:\n{str(e)}")   
 
 
     def display_all(self):
