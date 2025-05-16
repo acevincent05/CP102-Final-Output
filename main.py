@@ -1,8 +1,9 @@
-from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QTableWidgetItem, QTableWidget, QLabel
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMessageBox, QTableWidgetItem, QTableWidget, QLabel, QDialog
 from PyQt5.uic import loadUi
 import sys
 from connect_database import ConnectDatabase
 from MovieDetailsDialog import MovieDetailsDialog
+from AddMovieDialog import AddMovieDetailsDialog
 
 class main_window(QMainWindow):
     def __init__(self):
@@ -20,12 +21,18 @@ class main_window(QMainWindow):
         
         self.view_btn.clicked.connect(self.get_selected_data)
         
+        self.add_btn.clicked.connect(self.open_add_movie_dialog) # Connect to a new method
         
         # Button to get selected data
         #self.view_btn.clicked.connect(self.get_selected_data)
         
         # Label to display results
         self.result_label = QLabel('Selected data will appear here')
+
+    def open_add_movie_dialog(self):
+        dialog = AddMovieDetailsDialog(self.db)
+        if dialog.exec_() == QDialog.Accepted:
+            self.display_all() # Refresh the main table after adding a movie
 
     def get_selected_data(self):
         selected_items = self.tableWidget.selectedItems()
@@ -87,7 +94,7 @@ class main_window(QMainWindow):
             QMessageBox.critical(self, "Error", f"Could not load data:\n{str(e)}")
             return None
 
-    
+
     def display_all(self):
         try:
             if not self.db or not self.db.cursor:
